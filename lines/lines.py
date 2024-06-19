@@ -2,20 +2,20 @@ import argparse
 import os
 import json
 from processLines import linesMethod
-from straightness import *
+from straightness import calculate_straightness_rating, calculate_oscillation_rating
 
 def lines(directory):
     linesMethod(directory)
 
-def process_json(json_file):
-    ratings = calculate_straightness_rating(json_file)
+def process_json(json_file, rating_function):
+    ratings = rating_function(json_file)
     for rating in ratings:
-        print(f"File: {rating['file_name']}, Straightness Rating: {rating['straightness_rating']}")
+        print(f"File: {rating['file_name']}, Rating: {rating['rating']}")
 
 def main():
     parser = argparse.ArgumentParser(description='Process a directory and a JSON file.')
     
-    # Add a subparser for the 'lines' command
+    # Add a subparser for the commands
     subparsers = parser.add_subparsers(dest='command', help='sub-command help')
     
     # Sub-parser for 'lines' command
@@ -24,9 +24,14 @@ def main():
                               help='the directory to process')
     
     # Sub-parser for 'straight' command
-    parser_straight = subparsers.add_parser('straight', help='process JSON file')
+    parser_straight = subparsers.add_parser('straight', help='process JSON file for straightness rating')
     parser_straight.add_argument('json_file', metavar='JSON_FILE', type=str,
                                  help='the JSON file to process')
+
+    # Sub-parser for 'oscillate' command
+    parser_oscillate = subparsers.add_parser('oscillate', help='process JSON file for oscillation rating')
+    parser_oscillate.add_argument('json_file', metavar='JSON_FILE', type=str,
+                                  help='the JSON file to process')
 
     args = parser.parse_args()
 
@@ -34,7 +39,10 @@ def main():
         lines(args.directory)
 
     elif args.command == 'straight':
-        process_json(args.json_file)
+        process_json(args.json_file, calculate_straightness_rating)
+
+    elif args.command == 'oscillate':
+        process_json(args.json_file, calculate_oscillation_rating)
 
 if __name__ == '__main__':
     main()
