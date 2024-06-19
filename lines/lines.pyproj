@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>13ea03ad-c50b-42d8-9787-845f67e6001d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>straightness.py</StartupFile>
+    <StartupFile>lines.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

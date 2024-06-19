@@ -2,6 +2,7 @@ import json
 import numpy as np
 
 def calculate_straightness_rating(json_file):
+    json_file = "./rosbags/figures/" + json_file
     with open(json_file, 'r') as f:
         data = json.load(f)
     
@@ -30,10 +31,3 @@ def calculate_straightness_rating(json_file):
         })
 
     return straightness_ratings
-
-# Example usage:
-json_file = './rosbags/figures/straight_data.json'
-ratings = calculate_straightness_rating(json_file)
-
-for rating in ratings:
-    print(f"File: {rating['file_name']}, Straightness Rating: {rating['straightness_rating']}")
