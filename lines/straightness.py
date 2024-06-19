@@ -60,6 +60,8 @@ def calculate_oscillation_rating(json_file):
 
         # Calculate total angular change
         total_angular_change = 0.0
+        total_length = 0.0
+
         for i in range(len(x) - 2):
             v1 = np.array([x[i+1] - x[i], y[i+1] - y[i]])
             v2 = np.array([x[i+2] - x[i+1], y[i+2] - y[i+1]])
@@ -72,10 +74,17 @@ def calculate_oscillation_rating(json_file):
             else:
                 angle = np.arccos(np.clip(dot_product / norms, -1.0, 1.0))
 
+            # Calculate the length of the segment
+            segment_length = np.linalg.norm(v1)
+
             total_angular_change += angle
+            total_length += segment_length
 
         # Calculate oscillation rating
-        oscillation_rating = total_angular_change / (2 * np.pi)  # Normalize by 2*pi for a range of [0, 1]
+        if total_length == 0:
+            oscillation_rating = 0  # To avoid division by zero
+        else:
+            oscillation_rating = total_angular_change / (2 * np.pi * total_length)  # Normalize by 2*pi*total_length for a range of [0, 1]
 
         oscillation_ratings.append({
             'file_name': entry['file_name'],
