@@ -18,6 +18,10 @@ def is_zip_file(x: str):
     return x.endswith(".bag.tar.gz")
 
 def iterate(rosbags_directory):
+    # Create a new directory for each experiment
+    experiment_name = os.path.basename(os.path.normpath(rosbags_directory))
+    experiment_directory = os.path.join(figures_directory, experiment_name)
+    os.makedirs(experiment_directory, exist_ok=True)
 
     # Define a list to store extracted data
     extracted_data = []
@@ -54,24 +58,30 @@ def iterate(rosbags_directory):
 
             extracted_data.append(data_entry)
 
-            if finish_condition == 0:
-                plt.plot(x, y, c="green")
-            else:
-                plt.plot(x, y, alpha=0.5)
-
-            plt.scatter(x[0], y[0], marker="o", c=finish_colormap[finish_condition])
-            plt.scatter(x[-1], y[-1], marker="x", c=finish_colormap[finish_condition])
-
-            plt.scatter(6, 6, c="black", s=50)
-            plt.plot([7, 7], [5, 3], c="black", lw=2)
-            plt.plot([7, 7], [-3, -5], c="black", lw=2)
+            # Plot and save individual figures
+            fig, ax = plt.subplots()
+            ax.plot(x, y, alpha=0.5 if finish_condition != 0 else 1.0)
+            ax.scatter(x[0], y[0], marker="o", c=finish_colormap[finish_condition])
+            ax.scatter(x[-1], y[-1], marker="x", c=finish_colormap[finish_condition])
+            ax.scatter(6, 6, c="black", s=50)
+            ax.plot([7, 7], [5, 3], c="black", lw=2)
+            ax.plot([7, 7], [-3, -5], c="black", lw=2)
+            ax.set_title(f"File: {entry.name}, Finish Condition: {finish_condition}")
+            ax.set_xlabel("X Position")
+            ax.set_ylabel("Y Position")
+            ax.grid(True)
+            
+            # Save figure in the experiment directory
+            fig_name = os.path.join(experiment_directory, f"{os.path.splitext(entry.name)[0]}.png")
+            plt.savefig(fig_name, dpi=300)
+            plt.close(fig)
 
     return extracted_data
-
 
 def linesMethod(directory):
     rosbags_directory = "./rosbags/" + directory
     extracted_data = iterate(rosbags_directory)
+    
     # Save extracted_data to a JSON file
     experiment_name = os.path.basename(os.path.normpath(rosbags_directory))
     json_file_name = os.path.join(figures_directory, experiment_name + "_data.json")
@@ -80,8 +90,24 @@ def linesMethod(directory):
 
     print("Data saved to " + json_file_name)
 
-    # Save the figure
-    file_name = os.path.join(figures_directory, experiment_name + ".png")
+    # Save a summary figure for the entire experiment
+    plt.figure()
+    for entry in extracted_data:
+        x = entry['x']
+        y = entry['y']
+        finish_condition = entry['finish_condition']
+        if finish_condition == 0:
+            plt.plot(x, y, c="green")
+        else:
+            plt.plot(x, y, alpha=0.5)
+    plt.scatter(6, 6, c="black", s=50)
+    plt.plot([7, 7], [5, 3], c="black", lw=2)
+    plt.plot([7, 7], [-3, -5], c="black", lw=2)
     plt.title(experiment_name)
-    plt.savefig(file_name, dpi=600)
+    plt.xlabel("X Position")
+    plt.ylabel("Y Position")
+    plt.grid(True)
+    fig_summary_name = os.path.join(figures_directory, experiment_name + ".png")
+    plt.savefig(fig_summary_name, dpi=600)
     plt.show()
+
