@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>13ea03ad-c50b-42d8-9787-845f67e6001d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>lines.py</StartupFile>
+    <StartupFile>processLines.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,6 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="lines.py" />
+    <Compile Include="processLines.py" />
     <Compile Include="straightness.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
