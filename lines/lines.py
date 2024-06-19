@@ -65,6 +65,7 @@ for entry in valid_entries:
         plt.plot([7, 7], [5, 3], c="black", lw=2)
         plt.plot([7, 7], [-3, -5], c="black", lw=2)
 
+
 # Save extracted_data to a JSON file
 experiment_name = os.path.basename(os.path.normpath(rosbags_directory))
 json_file_name = os.path.join(figures_directory, experiment_name + "_data.json")
