@@ -12,18 +12,32 @@ def calculate_straightness_rating(json_file):
         x = np.array(entry['x'])
         y = np.array(entry['y'])
 
-        # Calculate Euclidean distance between start and end points
+        # Calculate slope and intercept of the line connecting start and end points
         start_point = np.array([x[0], y[0]])
         end_point = np.array([x[-1], y[-1]])
-        distance = np.linalg.norm(end_point - start_point)
+        
+        if start_point[0] == end_point[0]:
+            slope = np.inf  # Vertical line
+        else:
+            slope = (end_point[1] - start_point[1]) / (end_point[0] - start_point[0])
+        
+        intercept = start_point[1] - slope * start_point[0]
 
-        # Calculate actual trajectory length
-        total_distance = 0.0
-        for i in range(len(x) - 1):
-            total_distance += np.linalg.norm([x[i+1] - x[i], y[i+1] - y[i]])
+        # Calculate perpendicular distances from each point to the line
+        distances = []
+        for i in range(1, len(x) - 1):
+            point = np.array([x[i], y[i]])
+            if np.isinf(slope):
+                # Vertical line case
+                distance = np.abs(point[0] - start_point[0])
+            else:
+                # Perpendicular distance formula
+                distance = np.abs(slope * point[0] - point[1] + intercept) / np.sqrt(slope ** 2 + 1)
+            distances.append(distance)
 
         # Calculate straightness rating
-        straightness_rating = distance / total_distance
+        mean_distance = np.mean(distances) if distances else 0.0
+        straightness_rating = 1.0 - mean_distance / np.linalg.norm(end_point - start_point)
 
         straightness_ratings.append({
             'file_name': entry['file_name'],
