@@ -8,7 +8,7 @@ This code provides functionality to process ROS bag files, extract robot positio
 
 Processes a directory containing ROS bag files.
 
-- **Usage**: `python script.py lines <directory>`
+- **Usage**: `python lines.py lines <directory>`
 - **Functionality**:
   - Utilizes `linesMethod` from `processLines.py` to extract data and plot trajectories.
   - Generates individual trajectory plots and a summary figure for the entire experiment.
@@ -18,7 +18,7 @@ Processes a directory containing ROS bag files.
 
 Processes a JSON file to calculate straightness ratings for trajectory data.
 
-- **Usage**: `python script.py straight <json_file>`
+- **Usage**: `python lines.py straight <json_file>`
 - **Functionality**:
   - Uses `calculate_straightness_rating` function to evaluate trajectory straightness.
   - Outputs ratings for each trajectory file processed.
@@ -27,6 +27,6 @@ Processes a JSON file to calculate straightness ratings for trajectory data.
 
 Processes a JSON file to calculate oscillation ratings for trajectory data.
 
-- **Usage**: `python script.py oscillate <json_file>`
+- **Usage**: `python lines.py oscillate <json_file>`
 - **Functionality**:
   - Uses `calculate_oscillation_rating` function to assess trajectory oscillation.
