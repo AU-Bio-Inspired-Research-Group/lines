@@ -23,26 +23,26 @@ def process_straight_and_oscillate(json_file):
     oscillate_ratings = calculate_oscillation_rating(json_file)
     
     highest_successful_straight = {'file_name': None, 'rating': -float('inf')}
-    highest_successful_oscillate = {'file_name': None, 'rating': -float('inf')}
+    lowest_successful_oscillate = {'file_name': None, 'rating': float('inf')}
     
     # Find highest rated successful straightness
     for rating in straight_ratings:
         if rating['success'].strip() == "(successful)" and rating['rating'] > highest_successful_straight['rating']:
             highest_successful_straight = rating
     
-    # Find highest rated successful oscillation
+    # Find lowest rated successful oscillation
     for rating in oscillate_ratings:
-        if rating['success'].strip() == "(successful)" and rating['rating'] > highest_successful_oscillate['rating']:
-            highest_successful_oscillate = rating
+        if rating['success'].strip() == "(successful)" and rating['rating'] < lowest_successful_oscillate['rating']:
+            lowest_successful_oscillate = rating
     
-    # Print the highest ratings found
+    # Print the highest straightness and lowest oscillation ratings found
     if highest_successful_straight['file_name']:
         print(f"Highest rated successful straightness file: {highest_successful_straight['file_name']}, Rating: {highest_successful_straight['rating']}")
         open_lines_image(highest_successful_straight['file_name'], json_file)
 
-    if highest_successful_oscillate['file_name']:
-        print(f"Highest rated successful oscillation file: {highest_successful_oscillate['file_name']}, Rating: {highest_successful_oscillate['rating']}")
-        open_lines_image(highest_successful_oscillate['file_name'], json_file)
+    if lowest_successful_oscillate['file_name']:
+        print(f"Lowest rated successful oscillation file: {lowest_successful_oscillate['file_name']}, Rating: {lowest_successful_oscillate['rating']}")
+        open_lines_image(lowest_successful_oscillate['file_name'], json_file)
 
 def open_lines_image(file_name, json_file):
     # Assuming 'figures' directory is where the images are saved
@@ -52,6 +52,7 @@ def open_lines_image(file_name, json_file):
         os.system(f"start {lines_image_path}") 
     else:
         print(f"Lines image for {file_name} not found.")
+
 def main():
     parser = argparse.ArgumentParser(description='Process a directory and a JSON file.')
     
@@ -73,9 +74,10 @@ def main():
     parser_oscillate.add_argument('json_file', metavar='JSON_FILE', type=str,
                                   help='the JSON file to process')
 
-    both_oscillate = subparsers.add_parser('both', help='process JSON file for oscillation rating')
-    both_oscillate.add_argument('json_file', metavar='JSON_FILE', type=str,
-                                  help='the JSON file to process')
+    # Sub-parser for 'both' command
+    parser_both = subparsers.add_parser('both', help='process JSON file for both ratings')
+    parser_both.add_argument('json_file', metavar='JSON_FILE', type=str,
+                             help='the JSON file to process')
 
     args = parser.parse_args()
 
@@ -87,6 +89,7 @@ def main():
 
     elif args.command == 'oscillate':
         process_json(args.json_file, calculate_oscillation_rating)
+
     elif args.command == 'both':
         process_straight_and_oscillate(args.json_file)
 

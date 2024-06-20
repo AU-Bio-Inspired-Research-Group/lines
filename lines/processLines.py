@@ -64,15 +64,27 @@ def iterate(rosbags_directory):
 
             # Plot and save individual figures
             fig, ax = plt.subplots()
+
+            # Plot the trajectory
             if success:
                 ax.plot(x, y, c="green")
             else:
                 ax.plot(x, y, alpha=0.5)
+
+            # Plot start and end points
             ax.scatter(x[0], y[0], marker="o", c=finish_colormap[finish_condition])
             ax.scatter(x[-1], y[-1], marker="x", c=finish_colormap[finish_condition])
+
+            # Plot fixed markers
             ax.scatter(6, 6, c="black", s=50)
             ax.plot([7, 7], [5, 3], c="black", lw=2)
             ax.plot([7, 7], [-3, -5], c="black", lw=2)
+
+            # Set common axis limits
+            ax.set_xlim(-7.5, 7.5)  # Adjust as per your data range
+            ax.set_ylim(-7.5, 7.5)  # Adjust as per your data range
+
+            # Set title, labels, and grid
             ax.set_title(f"File: {entry.name}, Finish Condition: {finish_condition}")
             ax.set_xlabel("X Position")
             ax.set_ylabel("Y Position")
@@ -114,6 +126,11 @@ def linesMethod(directory):
     plt.title(experiment_name)
     plt.xlabel("X Position")
     plt.ylabel("Y Position")
+    
+    # Set common axis limits for summary plot
+    plt.xlim(-7.5, 7.5)  # Adjust as per your data range
+    plt.ylim(-7.5, 7.5)  # Adjust as per your data range
+    
     plt.grid(True)
     fig_summary_name = os.path.join(figures_directory, experiment_name + ".png")
     plt.savefig(fig_summary_name, dpi=600)
