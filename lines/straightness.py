@@ -2,8 +2,8 @@ import json
 import numpy as np
 
 def calculate_straightness_rating(json_file):
-    json_file = "./rosbags/figures/" + json_file
-    with open(json_file, 'r') as f:
+    json_file_path = "./rosbags/figures/" + json_file
+    with open(json_file_path, 'r') as f:
         data = json.load(f)
     
     straightness_ratings = []
@@ -39,17 +39,19 @@ def calculate_straightness_rating(json_file):
         mean_distance = np.mean(distances) if distances else 0.0
         straightness_rating = 1.0 - mean_distance / np.linalg.norm(end_point - start_point)
 
+        success_str = " (successful)" if entry['finish_condition'] == 0 else ""
         straightness_ratings.append({
             'file_name': entry['file_name'],
-            'rating': straightness_rating
+            'rating': straightness_rating,
+            'success': success_str
         })
 
     return straightness_ratings
 
 
 def calculate_oscillation_rating(json_file):
-    json_file = "./rosbags/figures/" + json_file
-    with open(json_file, 'r') as f:
+    json_file_path = "./rosbags/figures/" + json_file
+    with open(json_file_path, 'r') as f:
         data = json.load(f)
     
     oscillation_ratings = []
@@ -86,9 +88,11 @@ def calculate_oscillation_rating(json_file):
         else:
             oscillation_rating = total_angular_change / (2 * np.pi * total_length)  # Normalize by 2*pi*total_length for a range of [0, 1]
 
+        success_str = " (successful)" if entry['finish_condition'] == 0 else ""
         oscillation_ratings.append({
             'file_name': entry['file_name'],
-            'rating': oscillation_rating
+            'rating': oscillation_rating,
+            'success': success_str
         })
 
     return oscillation_ratings

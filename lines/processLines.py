@@ -49,18 +49,25 @@ def iterate(rosbags_directory):
             y = position_df["pose.position.y"].values.tolist()
             finish_condition = int(finish_df.iloc[-1, 1])
 
+            # Determine success based on finish_condition
+            success = (finish_condition == 0)
+
             data_entry = {
                 "file_name": entry.name,
                 "x": x,
                 "y": y,
-                "finish_condition": finish_condition
+                "finish_condition": finish_condition,
+                "success": success  # New field indicating success or failure
             }
 
             extracted_data.append(data_entry)
 
             # Plot and save individual figures
             fig, ax = plt.subplots()
-            ax.plot(x, y, alpha=0.5 if finish_condition != 0 else 1.0)
+            if success:
+                ax.plot(x, y, c="green")
+            else:
+                ax.plot(x, y, alpha=0.5)
             ax.scatter(x[0], y[0], marker="o", c=finish_colormap[finish_condition])
             ax.scatter(x[-1], y[-1], marker="x", c=finish_colormap[finish_condition])
             ax.scatter(6, 6, c="black", s=50)
@@ -96,7 +103,8 @@ def linesMethod(directory):
         x = entry['x']
         y = entry['y']
         finish_condition = entry['finish_condition']
-        if finish_condition == 0:
+        success = entry['success']
+        if success:
             plt.plot(x, y, c="green")
         else:
             plt.plot(x, y, alpha=0.5)
@@ -110,4 +118,3 @@ def linesMethod(directory):
     fig_summary_name = os.path.join(figures_directory, experiment_name + ".png")
     plt.savefig(fig_summary_name, dpi=600)
     plt.show()
-

@@ -10,8 +10,7 @@ def lines(directory):
 def process_json(json_file, rating_function):
     ratings = rating_function(json_file)
     for rating in ratings:
-        print(f"File: {rating['file_name']}, Rating: {rating['rating']}")
-
+        print(f"File: {rating['file_name']}, Rating: {rating['rating']} {rating['success']}")
 def main():
     parser = argparse.ArgumentParser(description='Process a directory and a JSON file.')
     
