@@ -48,7 +48,7 @@ def calculate_straightness_rating(json_file):
 
     return straightness_ratings
 
-
+'''
 def calculate_oscillation_rating(json_file):
     json_file_path = "./rosbags/figures/" + json_file
     with open(json_file_path, 'r') as f:
@@ -87,6 +87,41 @@ def calculate_oscillation_rating(json_file):
             oscillation_rating = 0  # To avoid division by zero
         else:
             oscillation_rating = total_angular_change / (2 * np.pi * total_length)  # Normalize by 2*pi*total_length for a range of [0, 1]
+
+        success_str = " (successful)" if entry['finish_condition'] == 0 else ""
+        oscillation_ratings.append({
+            'file_name': entry['file_name'],
+            'rating': oscillation_rating,
+            'success': success_str
+        })
+
+    return oscillation_ratings
+
+'''
+
+def calculate_oscillation_rating(json_file):
+    json_file_path = "./rosbags/figures/" + json_file
+    with open(json_file_path, 'r') as f:
+        data = json.load(f)
+
+    oscillation_ratings = []
+
+    for entry in data:
+        x = np.array(entry['x'])
+        y = np.array(entry['y'])
+
+        # Calculate Euclidean distance between start and end points
+        start_point = np.array([x[0], y[0]])
+        end_point = np.array([x[-1], y[-1]])
+        distance = np.linalg.norm(end_point - start_point)
+
+        # Calculate actual trajectory length
+        total_distance = 0.0
+        for i in range(len(x) - 1):
+            total_distance += np.linalg.norm([x[i+1] - x[i], y[i+1] - y[i]])
+
+        # Calculate straightness rating
+        oscillation_rating = distance / total_distance
 
         success_str = " (successful)" if entry['finish_condition'] == 0 else ""
         oscillation_ratings.append({
